@@ -6,6 +6,7 @@ import Input from "../components/ui/Input";
 import useProducts from "../hooks/useProducts";
 import type { Category } from "../types/index";
 import type { Product } from "../types/index";
+import { useCartStore } from "../store/cartStore";
 
 const CATEGORIES = [
   "all",
@@ -17,6 +18,11 @@ const CATEGORIES = [
 ];
 
 const HomePage = () => {
+  const { addItem, totalItems } = useCartStore();
+
+  const handleAddToCart = (product: Product) => {
+    addItem(product);
+  };
   const {
     products,
     searchQuery,
@@ -25,16 +31,10 @@ const HomePage = () => {
     setSelectedCategory,
   } = useProducts();
 
-  // Module 3 မှာ cart store ချိတ်မယ် — အခုတော့ console.log
-  const handleAddToCart = (product: Product) => {
-    console.log("Added to cart:", product.name);
-    alert(`✅ ${product.name} added to cart!`);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
-      <Navbar cartCount={0} />
+      <Navbar cartCount={totalItems()} />
 
       {/* Hero */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-12 px-4">

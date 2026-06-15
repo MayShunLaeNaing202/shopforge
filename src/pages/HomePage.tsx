@@ -1,41 +1,93 @@
 // src/pages/HomePage.tsx
-import Button from "../components/ui/Button";
-import Badge from "../components/ui/Badge";
+import { Search } from "lucide-react";
+import Navbar from "../components/layout/Navbar";
+import ProductGrid from "../components/product/ProductGrid";
 import Input from "../components/ui/Input";
-import StarRating from "../components/ui/StarRating";
+import useProducts from "../hooks/useProducts";
+import type { Category } from "../types/index";
+import type { Product } from "../types/index";
+
+const CATEGORIES = [
+  "all",
+  "electronics",
+  "clothing",
+  "books",
+  "home",
+  "sports",
+];
 
 const HomePage = () => {
+  const {
+    products,
+    searchQuery,
+    setSearchQuery,
+    selectedCategory,
+    setSelectedCategory,
+  } = useProducts();
+
+  // Module 3 မှာ cart store ချိတ်မယ် — အခုတော့ console.log
+  const handleAddToCart = (product: Product) => {
+    console.log("Added to cart:", product.name);
+    alert(`✅ ${product.name} added to cart!`);
+  };
+
   return (
-    <div className="p-10 flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">UI Components Test</h1>
+    <div className="min-h-screen bg-gray-50">
+      {/* Navbar */}
+      <Navbar cartCount={0} />
 
-      {/* Buttons */}
-      <div className="flex gap-3 flex-wrap">
-        <Button variant="primary">Primary</Button>
-        <Button variant="secondary">Secondary</Button>
-        <Button variant="outline">Outline</Button>
-        <Button variant="danger">Danger</Button>
-        <Button isLoading>Loading...</Button>
+      {/* Hero */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-12 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-4xl font-bold mb-3">Welcome to ShopForge</h1>
+          <p className="text-blue-100 text-lg">
+            Discover amazing products at great prices
+          </p>
+        </div>
       </div>
 
-      {/* Badges */}
-      <div className="flex gap-3 flex-wrap">
-        <Badge label="Electronics" variant="blue" />
-        <Badge label="In Stock" variant="green" />
-        <Badge label="Sale" variant="yellow" />
-        <Badge label="Sold Out" variant="red" />
-      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Search + Filter */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          {/* Search */}
+          <div className="flex-1">
+            <Input
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              leftIcon={<Search size={16} />}
+            />
+          </div>
 
-      {/* Input */}
-      <div className="max-w-sm flex flex-col gap-3">
-        <Input label="Email" placeholder="you@example.com" />
-        <Input label="Password" error="Password is required" />
-      </div>
+          {/* Category Filter */}
+          <div className="flex gap-2 flex-wrap">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat as Category | "all")}
+                className={`
+                  px-4 py-2 rounded-lg text-sm font-medium capitalize
+                  transition-colors duration-200
+                  ${
+                    selectedCategory === cat
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-gray-600 border border-gray-200 hover:border-blue-300"
+                  }
+                `}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      {/* Star Rating */}
-      <div className="flex flex-col gap-2">
-        <StarRating rating={4.5} reviewCount={128} />
-        <StarRating rating={3.0} reviewCount={45} size="md" />
+        {/* Results count */}
+        <p className="text-sm text-gray-500 mb-4">
+          {products.length} product{products.length !== 1 ? "s" : ""} found
+        </p>
+
+        {/* Product Grid */}
+        <ProductGrid products={products} onAddToCart={handleAddToCart} />
       </div>
     </div>
   );

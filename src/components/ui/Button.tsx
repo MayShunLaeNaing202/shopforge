@@ -1,5 +1,5 @@
 // src/components/ui/Button.tsx
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 // ① Props ကို TypeScript နဲ့ သတ်မှတ်တယ်
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

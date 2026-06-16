@@ -1,15 +1,16 @@
-// src/pages/LoginPage.tsx
+// src/pages/RegisterPage.tsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Store, Mail, Lock, AlertCircle } from "lucide-react";
+import { Store, User, Mail, Lock, AlertCircle } from "lucide-react";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import { useAuthStore } from "../store/authStore";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { register } = useAuthStore();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -19,23 +20,25 @@ const LoginPage = () => {
     e.preventDefault();
     setError("");
 
-    // Basic validation
-    if (!email || !password) {
+    if (!name || !email || !password) {
       setError("Please fill in all fields");
       return;
     }
 
-    setIsLoading(true);
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
 
-    // Simulate API delay
+    setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    const success = login(email, password);
+    const success = register(name, email, password);
 
     if (success) {
-      navigate("/"); // Home ကို redirect
+      navigate("/");
     } else {
-      setError("Invalid email or password");
+      setError("Email already exists");
     }
 
     setIsLoading(false);
@@ -50,10 +53,9 @@ const LoginPage = () => {
           <span className="text-2xl font-bold text-gray-900">ShopForge</span>
         </div>
 
-        <h1 className="text-xl font-bold text-gray-900 mb-1">Welcome back</h1>
-        <p className="text-gray-500 text-sm mb-6">Sign in to your account</p>
+        <h1 className="text-xl font-bold text-gray-900 mb-1">Create account</h1>
+        <p className="text-gray-500 text-sm mb-6">Join ShopForge today</p>
 
-        {/* Error message */}
         {error && (
           <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-lg mb-4">
             <AlertCircle size={16} />
@@ -62,6 +64,15 @@ const LoginPage = () => {
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <Input
+            label="Full Name"
+            type="text"
+            placeholder="May Shun"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            leftIcon={<User size={16} />}
+          />
+
           <Input
             label="Email"
             type="email"
@@ -74,7 +85,7 @@ const LoginPage = () => {
           <Input
             label="Password"
             type="password"
-            placeholder="••••••••"
+            placeholder="Min. 6 characters"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             leftIcon={<Lock size={16} />}
@@ -87,28 +98,17 @@ const LoginPage = () => {
             isLoading={isLoading}
             className="w-full mt-2"
           >
-            Sign In
+            Create Account
           </Button>
         </form>
 
-        {/* Demo credentials */}
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-          <p className="text-xs font-semibold text-blue-700 mb-2">
-            Demo accounts:
-          </p>
-          <p className="text-xs text-blue-600">👤 may@shopforge.com / may123</p>
-          <p className="text-xs text-blue-600">
-            🔧 admin@shopforge.com / admin123
-          </p>
-        </div>
-
         <p className="text-center text-sm text-gray-500 mt-6">
-          Don't have an account?{" "}
+          Already have an account?{" "}
           <Link
-            to="/register"
+            to="/login"
             className="text-blue-600 font-medium hover:underline"
           >
-            Sign up
+            Sign in
           </Link>
         </p>
       </div>
@@ -116,4 +116,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

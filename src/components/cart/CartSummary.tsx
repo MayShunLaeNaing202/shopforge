@@ -2,6 +2,7 @@
 import { ShoppingBag } from "lucide-react";
 import { useCartStore } from "../../store/cartStore";
 import Button from "../ui/Button";
+import { Link } from "react-router-dom";
 
 const CartSummary = () => {
   const { items, totalPrice, clearCart } = useCartStore();
@@ -41,15 +42,12 @@ const CartSummary = () => {
       </div>
 
       {/* Checkout Button */}
-      <Button
-        variant="primary"
-        size="lg"
-        className="w-full mt-6"
-        onClick={() => alert("Checkout — Module 6 မှာ build လုပ်မယ်!")}
-      >
-        <ShoppingBag size={16} />
-        Proceed to Checkout
-      </Button>
+      <Link to="/checkout">
+        <Button variant="primary" size="lg" className="w-full mt-6">
+          <ShoppingBag size={16} />
+          Proceed to Checkout
+        </Button>
+      </Link>
 
       {/* Clear Cart */}
       <button

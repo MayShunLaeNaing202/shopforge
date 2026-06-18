@@ -4,7 +4,7 @@ import {
   Package,
   ShoppingBag,
   DollarSign,
-  Users,
+  AlertTriangle,
   ArrowRight,
 } from "lucide-react";
 import Navbar from "../../components/layout/Navbar";
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
     {
       label: "Low Stock",
       value: lowStockProducts,
-      icon: Users,
+      icon: AlertTriangle,
       color: "bg-red-100 text-red-700",
     },
   ];

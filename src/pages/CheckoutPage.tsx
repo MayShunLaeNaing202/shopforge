@@ -1,6 +1,6 @@
 // src/pages/CheckoutPage.tsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { ShoppingBag, MapPin, CreditCard } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Input from "../components/ui/Input";
@@ -18,7 +18,6 @@ const CheckoutPage = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // Form state
   const [address, setAddress] = useState<Address>({
     street: "",
     city: "",
@@ -29,7 +28,6 @@ const CheckoutPage = () => {
   const [cardNumber, setCardNumber] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Validation
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
@@ -41,14 +39,14 @@ const CheckoutPage = () => {
       newErrors.cardNumber = "Valid card number required";
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // error မရှိရင် true
+    return Object.keys(newErrors).length === 0;
   };
 
   const handlePlaceOrder = async () => {
     if (!validate()) return;
 
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 1200)); // simulate payment
+    await new Promise((r) => setTimeout(r, 1200));
 
     const order = placeOrder(
       user!.id,
@@ -57,8 +55,14 @@ const CheckoutPage = () => {
       address,
     );
 
-    clearCart(); // cart ရှင်းတယ်
-    navigate(`/order/${order.id}`); // confirmation page
+    if (!order) {
+      setErrors({ form: "Some items are no longer in stock. Please review your cart." });
+      setIsLoading(false);
+      return;
+    }
+
+    clearCart();
+    navigate(`/order/${order.id}`);
     setIsLoading(false);
   };
 
@@ -66,10 +70,8 @@ const CheckoutPage = () => {
   const shipping = subtotal > 50 ? 0 : 5.99;
   const total = subtotal + shipping;
 
-  // Cart empty ဆိုရင်
   if (items.length === 0) {
-    navigate("/");
-    return null;
+    return <Navigate to="/" replace />;
   }
 
   return (
@@ -82,10 +84,14 @@ const CheckoutPage = () => {
           Checkout
         </h1>
 
+        {errors.form && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg">
+            {errors.form}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left — Forms */}
           <div className="lg:col-span-2 flex flex-col gap-6">
-            {/* Shipping Address */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
               <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <MapPin size={18} className="text-blue-600" />
@@ -136,7 +142,6 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Payment */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
               <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <CreditCard size={18} className="text-blue-600" />
@@ -161,18 +166,16 @@ const CheckoutPage = () => {
 
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                 <p className="text-xs text-blue-600 font-medium">
-                  🔒 Demo mode — use any 16-digit number
+                  Demo mode — use any 16-digit number
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Right — Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl border border-gray-100 p-6 sticky top-24">
               <h2 className="font-bold text-gray-900 mb-4">Order Summary</h2>
 
-              {/* Items */}
               <div className="flex flex-col gap-3 mb-4">
                 {items.map((item) => (
                   <div

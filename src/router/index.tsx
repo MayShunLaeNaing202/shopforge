@@ -7,6 +7,7 @@ import RegisterPage from "../pages/RegisterPage";
 import CheckoutPage from "../pages/CheckoutPage";
 import OrderConfirmPage from "../pages/OrderConfirmPage";
 import OrdersPage from "../pages/OrdersPage";
+import NotFoundPage from "../pages/NotFoundPage";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminProducts from "../pages/admin/AdminProducts";
 import AdminProductForm from "../pages/admin/AdminProductForm";
@@ -42,8 +43,6 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
-  // Admin routes — requireAdmin={true}
   {
     path: "/admin",
     element: (
@@ -84,4 +83,5 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+  { path: "*", element: <NotFoundPage /> },
 ]);

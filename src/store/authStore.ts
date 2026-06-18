@@ -3,16 +3,18 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { User } from "../types/index";
 
+type StoredUser = User & { password: string };
+
 interface AuthStore {
   user: User | null;
   isAuthenticated: boolean;
+  registeredUsers: StoredUser[];
   login: (email: string, password: string) => boolean;
   register: (name: string, email: string, password: string) => boolean;
   logout: () => void;
 }
 
-// Mock users — real backend မရှိသေးတဲ့အတွက်
-const MOCK_USERS: (User & { password: string })[] = [
+const SEED_USERS: StoredUser[] = [
   {
     id: "1",
     name: "Admin User",
@@ -31,52 +33,76 @@ const MOCK_USERS: (User & { password: string })[] = [
   },
 ];
 
+const toUser = (stored: StoredUser): User => ({
+  id: stored.id,
+  name: stored.name,
+  email: stored.email,
+  role: stored.role,
+  createdAt: stored.createdAt,
+});
+
+const getAllUsers = (registeredUsers: StoredUser[]): StoredUser[] => [
+  ...SEED_USERS,
+  ...registeredUsers,
+];
+
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       isAuthenticated: false,
+      registeredUsers: [],
 
       login: (email, password) => {
-        // Mock users ထဲမှာ ရှာတယ်
-        const found = MOCK_USERS.find(
+        const found = getAllUsers(get().registeredUsers).find(
           (u) => u.email === email && u.password === password,
         );
 
         if (found) {
-          // password မပါဘဲ user object သိမ်းတယ်
-          const { password: _, ...userWithoutPassword } = found;
           set({
-            user: userWithoutPassword,
+            user: toUser(found),
             isAuthenticated: true,
           });
-          return true; // login အောင်မြင်
+          return true;
         }
 
-        return false; // login မအောင်မြင်
+        return false;
       },
 
       register: (name, email, password) => {
-        // email ထပ်နေသလား စစ်တယ်
-        const exists = MOCK_USERS.find((u) => u.email === email);
+        const exists = getAllUsers(get().registeredUsers).some(
+          (u) => u.email === email,
+        );
         if (exists) return false;
 
-        // User အသစ် ဆောက်တယ်
         const newUser: User = {
-          id: String(MOCK_USERS.length + 1),
+          id: `user-${Date.now()}`,
           name,
           email,
           role: "shopper",
           createdAt: new Date().toISOString(),
         };
 
-        MOCK_USERS.push({ ...newUser, password });
-        set({ user: newUser, isAuthenticated: true });
+        set((state) => ({
+          registeredUsers: [
+            ...state.registeredUsers,
+            { ...newUser, password },
+          ],
+          user: newUser,
+          isAuthenticated: true,
+        }));
         return true;
       },
 
       logout: () => set({ user: null, isAuthenticated: false }),
     }),
-    { name: "shopforge-auth" },
+    {
+      name: "shopforge-auth",
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+        registeredUsers: state.registeredUsers,
+      }),
+    },
   ),
 );

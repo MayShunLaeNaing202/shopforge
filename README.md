@@ -19,85 +19,16 @@ ShopForge is a modern online store where shoppers can browse products, manage a 
 | Routing          | React Router v7 |
 | State Management | Zustand v5      |
 | Icons            | Lucide React    |
+| Testing          | Vitest + RTL    |
 | Deployment       | Vercel          |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-<<<<<<< HEAD
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
-
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
-
-=======
+## Features
 
 ### Shopper-facing
 
 - Browse products with live search and category filtering
 - Product cards with ratings, stock status, and category badges
-- Shopping cart with quantity controls, persisted across sessions
+- Shopping cart with quantity controls and stock limits, persisted across sessions
 - User registration and login with protected routes
 - Multi-step checkout with shipping address and payment form validation
 - Order confirmation and full order history
@@ -105,9 +36,9 @@ export default defineConfig([
 ### Admin-facing
 
 - Role-based admin dashboard (separate from shopper experience)
-- Store overview: total products, orders, revenue, and pending orders
+- Store overview: total products, orders, revenue, and low-stock alerts
 - Full product CRUD — add, edit, and delete products with image preview
-- Order management table across all customers
+- Order management table with status updates across all customers
 
 ## Architecture Decisions
 
@@ -162,6 +93,15 @@ npm install
 npm run dev
 ```
 
+### Scripts
+
+| Command           | Description              |
+| ----------------- | ------------------------ |
+| `npm run dev`     | Start development server |
+| `npm run build`   | Type-check and build     |
+| `npm run lint`    | Run ESLint               |
+| `npm test`        | Run Vitest tests         |
+
 ### Demo Accounts
 
 | Role    | Email               | Password |
@@ -174,5 +114,3 @@ npm run dev
 ## Author
 
 Built by **May Shun Lae Naing** as a portfolio project to demonstrate full-stack frontend development skills with modern React tooling.
-
-> > > > > > > ec012aba7c37050eb641ec188bc42141ba6e2da5

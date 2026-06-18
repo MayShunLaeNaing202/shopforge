@@ -1,24 +1,20 @@
 // src/pages/admin/AdminOrders.tsx
 import { ShoppingBag } from "lucide-react";
 import Navbar from "../../components/layout/Navbar";
-import Badge from "../../components/ui/Badge";
 import { useOrderStore } from "../../store/orderStore";
 import { useCartStore } from "../../store/cartStore";
 import type { OrderStatus } from "../../types/index";
 
-const statusVariant: Record<
-  OrderStatus,
-  "blue" | "green" | "yellow" | "red" | "gray"
-> = {
-  pending: "yellow",
-  processing: "blue",
-  shipped: "blue",
-  delivered: "green",
-  cancelled: "red",
-};
+const STATUS_OPTIONS: OrderStatus[] = [
+  "pending",
+  "processing",
+  "shipped",
+  "delivered",
+  "cancelled",
+];
 
 const AdminOrders = () => {
-  const { orders } = useOrderStore();
+  const { orders, updateOrderStatus } = useOrderStore();
   const { totalItems } = useCartStore();
 
   return (
@@ -65,10 +61,22 @@ const AdminOrders = () => {
                       ${order.total.toFixed(2)}
                     </td>
                     <td className="px-6 py-4">
-                      <Badge
-                        label={order.status}
-                        variant={statusVariant[order.status]}
-                      />
+                      <select
+                        value={order.status}
+                        onChange={(e) =>
+                          updateOrderStatus(
+                            order.id,
+                            e.target.value as OrderStatus,
+                          )
+                        }
+                        className="text-xs capitalize rounded-lg border border-gray-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        {STATUS_OPTIONS.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                   </tr>
                 ))}

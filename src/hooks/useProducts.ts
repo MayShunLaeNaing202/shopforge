@@ -1,15 +1,16 @@
 // src/hooks/useProducts.ts
 import { useState, useMemo } from "react";
-import { products as allProducts } from "../data/products";
+import { useProductStore } from "../store/productStore";
 import type { Category, Product } from "../types/index";
 
 const useProducts = () => {
+  const { products: allProducts } = useProductStore(); // ← ပြောင်းတဲ့နေရာ
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<Category | "all">(
     "all",
   );
 
-  // useMemo — search/filter ပြောင်းမှပဲ recalculate လုပ်တယ်
   const filteredProducts = useMemo(() => {
     return allProducts.filter((product: Product) => {
       const matchesSearch = product.name
@@ -21,7 +22,7 @@ const useProducts = () => {
 
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [allProducts, searchQuery, selectedCategory]); // allProducts ထည့်ဖို့ မမေ့ပါနဲ့
 
   return {
     products: filteredProducts,
